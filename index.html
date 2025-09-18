@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HEARt — AI 감정 상담 프로토타입</title>
-  <meta name="description" content="AI 버추얼 캐릭터와 대화하며 외로움을 해소하는 감정 상담 플랫폼 프로토타입" />
+  <title>버츄얼 심리데이터 기반 감정 ai 상담사</title>
+  <meta name="description" content="AI 버추얼 캐릭터와 대화하며 외로움을 해소하는 감정 상담 플랫폼" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="favicon.ico" />
 </head>
@@ -14,9 +14,9 @@
   <!-- 헤더 -->
   <header class="site-header" role="banner">
     <div class="header__inner container">
-      <a class="brand" href="#" aria-label="HEARt 홈">
+      <a class="brand" href="#" aria-label="홈">
         <img src="assets/logo.svg" alt="" class="brand__logo" />
-        <span class="brand__name">HEARt</span>
+        <span class="brand__name">버츄얼 심리데이터 기반 감정 ai 상담사</span>
       </a>
 
       <nav class="nav" aria-label="주요 메뉴">
@@ -193,19 +193,19 @@
       <div class="modal__body">
         <div class="char-grid" role="list" id="characterList">
           <!-- JS에서 카드 주입 -->
-          <button class="char-card" role="listitem" data-char-id="ari">
-            <img src="assets/avatars/ari.png" alt="" />
-            <span class="char-card__name">아리</span>
+          <button class="char-card" role="listitem" data-char-id="shima">
+            <img src="assets/avatars/shima.png" alt="" />
+            <span class="char-card__name">시마 린</span>
             <span class="char-card__tag">기본</span>
           </button>
-          <button class="char-card" role="listitem" data-char-id="kai">
-            <img src="assets/avatars/kai.png" alt="" />
-            <span class="char-card__name">카이</span>
+          <button class="char-card" role="listitem" data-char-id="nadesiko">
+            <img src="assets/avatars/nadesiko.png" alt="" />
+            <span class="char-card__name">카가미하라 나데시코</span>
             <span class="char-card__tag">활발</span>
           </button>
-          <button class="char-card" role="listitem" data-char-id="mio">
-            <img src="assets/avatars/mio.png" alt="" />
-            <span class="char-card__name">미오</span>
+          <button class="char-card" role="listitem" data-char-id="aoi">
+            <img src="assets/avatars/aoi.png" alt="" />
+            <span class="char-card__name">이누야마 아오이</span>
             <span class="char-card__tag">차분</span>
           </button>
         </div>
@@ -322,7 +322,7 @@
   <!-- 템플릿: 메시지 아이템 -->
   <template id="tplMsgAI">
     <div class="msg msg--ai">
-      <div class="msg__avatar" aria-hidden="true"><img src="assets/avatars/ari.png" alt="" /></div>
+      <div class="msg__avatar" aria-hidden="true"><img src="assets/avatars/shima.png" alt="" /></div>
       <div class="msg__bubble"><p></p><time class="msg__time"></time></div>
     </div>
   </template>
