@@ -1,3 +1,8 @@
+/* ==============================
+   HEARt — Prototype App Script
+   (키워드별 응답 로직 포함)
+   ============================== */
+
 /* ---------- Utils ---------- */
 const $ = (sel, el = document) => el.querySelector(sel);
 const $$ = (sel, el = document) => Array.from(el.querySelectorAll(sel));
@@ -176,6 +181,7 @@ chatForm?.addEventListener("submit", (e) => {
   appendMessage("user", text);
   chatText.value = "";
   autoGrow(chatText);
+  decrementTime(15); // 메시지당 15초 차감(데모)
   aiReply(text);
 });
 
@@ -193,7 +199,7 @@ function startTimer() {
   timerId = setInterval(() => {
     if (document.hidden) return; // 비가시성 상태에서는 멈춤
     decrementTime(1);
-  }, 2000);
+  }, 1000);
 }
 function decrementTime(sec) {
   state.freeSeconds = Math.max(0, state.freeSeconds - sec);
@@ -294,27 +300,8 @@ document.addEventListener("click", (e) => {
 $("#characterList")?.addEventListener("click", (e) => {
   const card = e.target.closest(".char-card");
   if (!card) return;
-
-  // active 표시
   $$(".char-card").forEach(c => c.classList.remove("is-active"));
   card.classList.add("is-active");
-
-  // 선택한 캐릭터 정보 읽기
-  const id = card.getAttribute("data-char-id");
-  const name = $(".char-card__name", card).textContent.trim();
-  const tag = $(".char-card__tag", card).textContent.trim();
-  state.currentChar = { id, name, tag };
-  storage.set("currentChar", state.currentChar);
-
-  // 응답 세트 다시 로드
-  reloadRepliesFor(state.currentChar.id);
-  renderBindings();
-  drawAvatar(true);
-
-  appendMessage("ai", `${state.currentChar.name}로 전환했어. 이제 키워드 응답이 달라질 거야!`);
-
-  // 모달 닫기
-  modalCharacters.close();
 });
 
 /* ---------- Avatar Canvas (간단 표정 렌더러) ---------- */
