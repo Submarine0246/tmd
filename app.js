@@ -19,11 +19,17 @@ const state = {
   mode: "라이트 상담",
   mood: "안정",
   avatarStatus: "준비됨",
-  currentChar: storage.get("currentChar", { id: "ari", name: "아리", tag: "기본" }),
+  currentChar: storage.get("currentChar", { id: "shima", name: "shima", tag: "기본" }),
   customize: storage.get("customize", {
     hairColor: "#6b7cff", eyeColor: "#2b2b2b", outfit: "casual", tone: "gentle", interests: ""
   }),
-  voiceEnabled: false
+  voiceEnabled: false,
+
+  // 키워드 응답 맵(캐시)
+  replies: {
+    char: [],   // 현재 캐릭터용 [ {re:RegExp, text:string}, ... ]
+    common: []  // default용
+  }
 };
 
 /* ---------- Bindings Renderer ---------- */
@@ -55,30 +61,72 @@ function appendMessage(type, text) {
   logEl.appendChild(node);
   stickScroll();
 }
-
 function stickScroll() {
   logEl.scrollTo({ top: logEl.scrollHeight, behavior: "smooth" });
 }
 
-/* 간단 감정/의도 분석(로컬, 데모용) */
+/* ---------- 키워드 응답 로딩 ---------- */
+/**
+ * HTML의 <script type="application/json" id="..."> 내용을 읽어서
+ * { "키워드1|키워드2": "응답", ... } 형태를 [{re: RegExp, text: string}, ...]로 변환
+ */
+function loadReplySetById(id) {
+  const node = document.getElementById(id);
+  if (!node) return [];
+  let obj = {};
+  try {
+    obj = JSON.parse(node.textContent.trim() || "{}");
+  } catch {
+    console.warn(`[HEARt] replies JSON 파싱 실패: #${id}`);
+    return [];
+  }
+  const entries = Object.entries(obj);
+  // 입력 순서 보존을 위해 map → 배열
+  return entries.map(([pattern, text]) => {
+    // 패턴을 부분일치/대소문자 무시로 처리
+    // 예: "안녕|hello|hi" → /(안녕|hello|hi)/i
+    const re = new RegExp(`(${pattern})`, "i");
+    return { re, text };
+  });
+}
+
+/**
+ * 현재 캐릭터의 응답세트와 default 세트를 state.replies에 적재
+ */
+function reloadRepliesFor(charId) {
+  state.replies.char = loadReplySetById(`replies-${charId}`);
+  state.replies.common = loadReplySetById("replies-default");
+}
+
+/**
+ * 텍스트에서 첫 매칭되는 응답을 캐릭터→공통 우선순위로 탐색
+ */
+function findKeywordReply(userText) {
+  const t = userText.trim();
+  if (!t) return null;
+
+  const sets = [state.replies.char, state.replies.common];
+  for (const set of sets) {
+    for (const item of set) {
+      if (item.re.test(t)) return item.text;
+    }
+  }
+  return null;
+}
+
+/* ---------- 간단 감정/의도 분석(키워드 미매칭 시 백업 응답) ---------- */
 function analyze(text) {
-  const t = text.toLowerCase();
-  const neg = /(외롭|lonely|힘들|sad|불안|우울|힘들어)/i.test(text);
+  const neg = /(외롭|lonely|힘들|sad|불안|우울|허전)/i.test(text);
   const pos = /(행복|좋아|기쁨|고마|설렘|괜찮)/i.test(text);
-  const ask = /[?？]$/.test(text) || /(어떻게|될까|해도 될)/.test(text);
+  const ask = /[?？]$/.test(text) || /(어떻게|될까|해도 될|무엇을)/.test(text);
   let mood = state.mood;
   if (neg) mood = "우려";
   else if (pos) mood = "밝음";
   return { neg, pos, ask, mood };
 }
-
-function aiReply(userText) {
+function fallbackByTone(userText) {
   const { neg, pos, ask, mood } = analyze(userText);
   state.mood = mood;
-  state.avatarStatus = "생각 중…";
-  renderBindings();
-  drawAvatar(); // 표정 갱신
-
   const tone = state.customize.tone;
   const style = {
     gentle: ["천천히 말해줘도 괜찮아.", "네가 느끼는 감정은 중요한 신호야."],
@@ -86,36 +134,48 @@ function aiReply(userText) {
     calm: ["상황을 하나씩 정리해보자.", "호흡을 고르고 생각을 정리해보자."]
   }[tone] || [];
 
-  let text = "";
-  if (neg) {
-    text = `그렇게 느낄 수 있어. ${style[0] ?? ""} 지금 가장 마음을 눌러버리는 생각이 뭐였는지 한 문장으로만 적어줄래?`;
-  } else if (pos) {
-    text = `그 기분 좋다! ${style[1] ?? ""} 오늘 그 감정을 만든 요인을 기억해두면 다음에도 도움 될 거야.`;
-  } else if (ask) {
-    text = `내가 생각하는 선택지는 몇 가지가 있어. ① 지금 할 수 있는 아주 작은 행동 ② 도움을 요청할 사람 ③ 잠깐의 휴식. 어떤 것부터 시도해볼까?`;
-  } else {
-    text = `응, 계속 들어줄게. 조금 더 구체적으로 적어줄래? 장소, 사람, 감정(0~10) 중 하나만 먼저 말해도 좋아.`;
-  }
+  if (neg) return `그렇게 느낄 수 있어. ${style[0] ?? ""} 지금 가장 마음을 눌러버리는 생각이 뭐였는지 한 문장으로만 적어줄래?`;
+  if (pos) return `그 기분 좋다! ${style[1] ?? ""} 오늘 그 감정을 만든 요인을 기억해두면 다음에도 도움 될 거야.`;
+  if (ask) return `내가 생각하는 선택지는 몇 가지가 있어. ① 지금 할 수 있는 아주 작은 행동 ② 도움을 요청할 사람 ③ 잠깐의 휴식. 어떤 것부터 시도해볼까?`;
+  return `응, 계속 들어줄게. 장소·사람·감정(0~10) 중 하나만 먼저 말해줘도 좋아.`;
+}
 
+/* ---------- AI Reply ---------- */
+function aiReply(userText) {
+  // 1) 캐릭터 우선 → 공통 세트에서 키워드 검색
+  const matched = findKeywordReply(userText);
+
+  // 2) 상태/표정 업데이트
+  state.avatarStatus = "생각 중…";
+  renderBindings();
+  drawAvatar();
+
+  // 3) 응답 결정
+  const reply = matched ?? fallbackByTone(userText);
+
+  // 4) 출력
   setTimeout(() => {
     state.avatarStatus = "응답 중";
     renderBindings();
-    appendMessage("ai", text);
+    appendMessage("ai", reply);
     state.avatarStatus = "대화 중";
     renderBindings();
     drawAvatar();
-  }, 500 + Math.random() * 400);
+  }, 400 + Math.random() * 300);
 }
 
-/* 제출 처리 */
-form?.addEventListener("submit", (e) => {
+/* ---------- Submit ---------- */
+const chatForm = $("#chatForm");
+const chatText = $("#chatText");
+
+chatForm?.addEventListener("submit", (e) => {
   e.preventDefault();
   if (state.freeSeconds <= 0) { openUpsell(); return; }
-  const text = textarea.value.trim();
+  const text = chatText.value.trim();
   if (!text) return;
   appendMessage("user", text);
-  textarea.value = "";
-  autoGrow(textarea);
+  chatText.value = "";
+  autoGrow(chatText);
   decrementTime(15); // 메시지당 15초 차감(데모)
   aiReply(text);
 });
@@ -125,7 +185,7 @@ function autoGrow(el) {
   el.style.height = "auto";
   el.style.height = Math.min(el.scrollHeight, 160) + "px";
 }
-textarea?.addEventListener("input", () => autoGrow(textarea));
+chatText?.addEventListener("input", () => autoGrow(chatText));
 
 /* ---------- Free time countdown ---------- */
 let timerId = null;
@@ -155,7 +215,6 @@ const modalSafety = $("#modalSafety");
 
 function openCharacters() { modalCharacters?.showModal(); }
 function openCustomize() { 
-  // 현재 값 반영
   const f = $("#customizeForm");
   if (f) {
     f.hairColor.value = state.customize.hairColor;
@@ -180,16 +239,20 @@ document.addEventListener("click", (e) => {
   if (action === "open-safety") openSafety();
   if (action === "start-now") { $("#chatText")?.focus(); }
   if (action === "choose-character") {
-    // 선택된 카드(active) 찾기
-    const active = $(".char-card.is-active") || $(".char-card[data-char-id='ari']");
+    const active = $(".char-card.is-active") || $(".char-card[data-char-id='shima']");
     if (active) {
       const id = active.getAttribute("data-char-id");
       const name = $(".char-card__name", active).textContent.trim();
       const tag = $(".char-card__tag", active).textContent.trim();
       state.currentChar = { id, name, tag };
       storage.set("currentChar", state.currentChar);
+
+      // 캐릭터 전환 시 응답 세트 재로딩
+      reloadRepliesFor(state.currentChar.id);
       renderBindings();
       drawAvatar(true);
+
+      appendMessage("ai", `${state.currentChar.name}로 전환했어. 키워드 기반 응답을 사용할게!`);
     }
     modalCharacters.close();
   }
@@ -275,18 +338,14 @@ function drawAvatar(pulse = false) {
   const eyeY = h/2 - 10;
   const eyeDx = 52;
   const eyeR = 8;
-  // 기분에 따라 눈 모양/입 모양 변경
   if (mood === "밝음") {
-    // 눈 웃음
     ctx.lineWidth = 4; ctx.strokeStyle = eyeColor;
     ctx.beginPath(); ctx.arc(w/2 - eyeDx, eyeY, 10, 0, Math.PI, false); ctx.stroke();
     ctx.beginPath(); ctx.arc(w/2 + eyeDx, eyeY, 10, 0, Math.PI, false); ctx.stroke();
   } else if (mood === "우려") {
-    // 반쯤 감은 눈
     ctx.fillRect(w/2 - eyeDx - 8, eyeY - 2, 16, 4);
     ctx.fillRect(w/2 + eyeDx - 8, eyeY - 2, 16, 4);
   } else {
-    // 기본 동그란 눈
     ctx.beginPath(); ctx.arc(w/2 - eyeDx, eyeY, eyeR, 0, Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(w/2 + eyeDx, eyeY, eyeR, 0, Math.PI*2); ctx.fill();
   }
@@ -303,7 +362,6 @@ function drawAvatar(pulse = false) {
   }
   ctx.stroke();
 
-  // 심장 박동 효과(옵션)
   if (pulse) {
     let t = 0;
     const id = setInterval(() => {
@@ -320,7 +378,7 @@ function moodToLabel(m) {
   return m === "밝음" ? "😄 밝음" : m === "우려" ? "😟 우려" : "🙂 안정";
 }
 
-/* ---------- Accessibility niceties ---------- */
+/* ---------- Accessibility ---------- */
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     $$("dialog[open]").forEach(d => d.close());
@@ -329,21 +387,23 @@ document.addEventListener("keydown", (e) => {
 
 /* ---------- Init ---------- */
 function init() {
+  // 캐릭터/공통 키워드 세트 적재
+  reloadRepliesFor(state.currentChar.id);
+
   renderBindings();
   drawAvatar(true);
   startTimer();
-  autoGrow(textarea);
+  autoGrow(chatText);
 
   // 최초 안내
   if (!storage.get("welcomed", false)) {
     setTimeout(() => {
-      appendMessage("ai", "어서 와! 난 아리야. 편하게 이야기해줘. (데모에서는 로컬에서만 동작해)");
+      appendMessage("ai", "어서 와! 키워드(예: 외로워, 불안, 행복, 게임)를 넣으면 맞춤 응답이 나와. shima/nadesiko/aoi마다 응답이 달라!");
       storage.set("welcomed", true);
     }, 300);
   }
 }
 document.addEventListener("visibilitychange", () => {
-  // 페이지 다시 볼 때 표정/상태 갱신
   if (!document.hidden) { renderBindings(); drawAvatar(); }
 });
 
