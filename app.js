@@ -77,7 +77,7 @@ function loadReplySetById(id) {
   try {
     obj = JSON.parse(node.textContent.trim() || "{}");
   } catch {
-    console.warn(`[HEARt] replies JSON 파싱 실패: #${id}`);
+    console.warn(`[괴정중 6번 타자] replies JSON 파싱 실패: #${id}`);
     return [];
   }
   const entries = Object.entries(obj);
