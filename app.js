@@ -1,7 +1,3 @@
-/* ==============================
-   HEARt — Prototype App Script
-   ============================== */
-
 /* ---------- Utils ---------- */
 const $ = (sel, el = document) => el.querySelector(sel);
 const $$ = (sel, el = document) => Array.from(el.querySelectorAll(sel));
