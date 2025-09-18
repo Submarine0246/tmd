@@ -53,6 +53,13 @@ const tplUser = $("#tplMsgUser");
 const form = $("#chatForm");
 const textarea = $("#chatText");
 
+chatText?.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault(); // 줄바꿈 막기
+    chatForm.requestSubmit(); // 폼 제출 실행
+  }
+});
+
 function appendMessage(type, text) {
   const tpl = type === "ai" ? tplAI : tplUser;
   const node = tpl.content.firstElementChild.cloneNode(true);
