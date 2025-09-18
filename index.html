@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HEARt — AI 감정 상담 프로토타입</title>
+  <meta name="description" content="AI 버추얼 캐릭터와 대화하며 외로움을 해소하는 감정 상담 플랫폼 프로토타입" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.ico" />
+</head>
+<body data-app="heart-proto">
+  <noscript>이 서비스는 자바스크립트가 필요합니다. 브라우저 설정에서 활성화해주세요.</noscript>
+
+  <!-- 헤더 -->
+  <header class="site-header" role="banner">
+    <div class="header__inner container">
+      <a class="brand" href="#" aria-label="HEARt 홈">
+        <img src="assets/logo.svg" alt="" class="brand__logo" />
+        <span class="brand__name">HEARt</span>
+      </a>
+
+      <nav class="nav" aria-label="주요 메뉴">
+        <ul class="nav__list">
+          <li><a href="#features">기능</a></li>
+          <li><a href="#pricing">요금제</a></li>
+          <li><a href="#safety">안전</a></li>
+        </ul>
+      </nav>
+
+      <div class="header__actions">
+        <button class="btn btn--ghost" data-action="open-login">로그인</button>
+        <button class="btn btn--primary" data-action="open-signup">시작하기</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 히어로 -->
+  <section class="hero" id="top">
+    <div class="hero__inner container">
+      <div class="hero__copy">
+        <h1 class="hero__title">애니·버추얼 캐릭터와 <br/>진짜같은 감정 대화</h1>
+        <p class="hero__subtitle">무료로 가볍게 말 걸어보고, 필요할 땐 더 깊게. 프리미엄에서는 인기 캐릭터와도 연결돼요.</p>
+        <div class="hero__cta">
+          <button class="btn btn--primary" data-action="start-now">지금 대화하기</button>
+          <button class="btn btn--secondary" data-action="open-characters">캐릭터 고르기</button>
+        </div>
+        <ul class="hero__badges" aria-label="서비스 특징">
+          <li>실시간 감정 반응</li>
+          <li>커스터마이징 캐릭터</li>
+          <li>웹·모바일 지원</li>
+        </ul>
+      </div>
+
+      <div class="hero__visual">
+        <!-- 캐릭터 뷰포트: 캔버스/이미지/Live2D/WebGL 등 JS에서 마운트 -->
+        <div class="avatar-viewport" role="img" aria-label="캐릭터 미리보기">
+          <canvas id="avatarCanvas" width="480" height="480" data-engine="placeholder"></canvas>
+          <div class="avatar__status" aria-live="polite">
+            <span class="dot dot--idle" aria-hidden="true"></span>
+            <span data-bind="avatarStatusText">준비됨</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 메인 앱 영역 -->
+  <main class="app container" id="app" role="main">
+    <div class="app__grid">
+      <!-- 좌측: 캐릭터 & 세션 패널 -->
+      <aside class="panel panel--left" aria-label="세션 정보">
+        <section class="card">
+          <header class="card__header">
+            <h2 class="card__title">세션</h2>
+          </header>
+          <div class="card__body">
+            <dl class="kv">
+              <div class="kv__row">
+                <dt>남은 무료 시간</dt>
+                <dd><span data-bind="freeMinutes">10</span>분</dd>
+              </div>
+              <div class="kv__row">
+                <dt>감정 상태</dt>
+                <dd><span data-bind="avatarMood">🙂 안정</span></dd>
+              </div>
+              <div class="kv__row">
+                <dt>모드</dt>
+                <dd>
+                  <span data-bind="modeLabel">라이트 상담</span>
+                </dd>
+              </div>
+            </dl>
+            <div class="stack gap-s">
+              <button class="btn btn--secondary" data-action="open-characters">캐릭터 변경</button>
+              <button class="btn btn--ghost" data-action="open-customize">커스터마이징</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="features">
+          <header class="card__header">
+            <h2 class="card__title">기능</h2>
+          </header>
+          <ul class="feature-list">
+            <li>표정·제스처 기반 반응</li>
+            <li>감정 라벨링(사용자·캐릭터)</li>
+            <li>세션 리캡 & 저널</li>
+            <li>특별 활동: 식사·게임(프리미엄)</li>
+          </ul>
+        </section>
+
+        <section class="card" id="pricing">
+          <header class="card__header">
+            <h2 class="card__title">요금제</h2>
+          </header>
+          <ul class="pricing-list">
+            <li><strong>Free</strong> — 10분/일 체험</li>
+            <li><strong>Plus</strong> — 대화 무제한, 기본 활동</li>
+            <li><strong>Premium</strong> — 인기 캐릭터 & 특별 활동</li>
+          </ul>
+          <button class="btn btn--primary" data-action="open-upsell">프리미엄 알아보기</button>
+        </section>
+
+        <section class="card" id="safety">
+          <header class="card__header">
+            <h2 class="card__title">안전</h2>
+          </header>
+          <p class="muted">위기 대응 안내 및 24시간 도움말 제공. 실제 의료·상담 대체 아님.</p>
+          <button class="btn btn--ghost" data-action="open-safety">도움말</button>
+        </section>
+      </aside>
+
+      <!-- 우측: 채팅 패널 -->
+      <section class="panel panel--chat" aria-label="대화 영역">
+        <header class="chat__header">
+          <div class="chat__meta">
+            <h2 class="chat__title" data-bind="chatWithName">아리(기본)</h2>
+            <span class="chip" data-bind="presence">온라인</span>
+          </div>
+          <div class="chat__tools">
+            <button class="icon-btn" aria-label="세션 새로고침" data-action="refresh-session">
+              <img src="assets/icons/refresh.svg" alt="" />
+            </button>
+            <button class="icon-btn" aria-label="오디오 토글" data-action="toggle-voice">
+              <img src="assets/icons/mic.svg" alt="" />
+            </button>
+            <button class="icon-btn" aria-label="설정" data-action="open-settings">
+              <img src="assets/icons/settings.svg" alt="" />
+            </button>
+          </div>
+        </header>
+
+        <!-- 메시지 로그 -->
+        <div class="chat__log" role="log" aria-live="polite" aria-relevant="additions" data-scroll="stick" id="chatLog">
+          <!-- JS가 메시지 아이템을 주입 -->
+          <div class="msg msg--ai" data-msg-id="seed-1">
+            <div class="msg__avatar" aria-hidden="true"><img src="assets/avatars/ari.png" alt="" /></div>
+            <div class="msg__bubble">
+              <p>안녕! 오늘 기분은 어때? 편하게 이야기 나눠볼래?</p>
+              <time class="msg__time" datetime="">지금</time>
+            </div>
+          </div>
+        </div>
+
+        <!-- 입력 영역 -->
+        <form class="chat__input" id="chatForm" aria-label="메시지 입력">
+          <label for="chatText" class="visually-hidden">메시지 입력</label>
+          <textarea id="chatText" name="message" rows="1" placeholder="무슨 일이 있었는지 말해줘…" autocomplete="off"></textarea>
+          <div class="chat__input-actions">
+            <button type="button" class="icon-btn" aria-label="이모지" data-action="open-emoji">
+              <img src="assets/icons/emoji.svg" alt="" />
+            </button>
+            <button type="submit" class="btn btn--primary">보내기</button>
+          </div>
+        </form>
+
+        <!-- 세션 툴바 -->
+        <div class="session-toolbar" role="status" aria-live="polite">
+          <span>남은 무료 시간: <strong data-bind="freeMinutes">10</strong>분</span>
+          <button class="btn btn--link" data-action="open-upsell">시간 늘리기</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- 모달: 캐릭터 선택 -->
+  <dialog class="modal" id="modalCharacters" aria-labelledby="modalCharactersTitle">
+    <form method="dialog" class="modal__card">
+      <header class="modal__header">
+        <h3 id="modalCharactersTitle">캐릭터 선택</h3>
+        <button class="icon-btn" value="close" aria-label="닫기"><img src="assets/icons/close.svg" alt="" /></button>
+      </header>
+      <div class="modal__body">
+        <div class="char-grid" role="list" id="characterList">
+          <!-- JS에서 카드 주입 -->
+          <button class="char-card" role="listitem" data-char-id="ari">
+            <img src="assets/avatars/ari.png" alt="" />
+            <span class="char-card__name">아리</span>
+            <span class="char-card__tag">기본</span>
+          </button>
+          <button class="char-card" role="listitem" data-char-id="kai">
+            <img src="assets/avatars/kai.png" alt="" />
+            <span class="char-card__name">카이</span>
+            <span class="char-card__tag">활발</span>
+          </button>
+          <button class="char-card" role="listitem" data-char-id="mio">
+            <img src="assets/avatars/mio.png" alt="" />
+            <span class="char-card__name">미오</span>
+            <span class="char-card__tag">차분</span>
+          </button>
+        </div>
+      </div>
+      <footer class="modal__footer">
+        <button class="btn btn--secondary" value="cancel">취소</button>
+        <button class="btn btn--primary" value="default" data-action="choose-character">선택</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- 모달: 커스터마이징 -->
+  <dialog class="modal" id="modalCustomize" aria-labelledby="modalCustomizeTitle">
+    <form method="dialog" class="modal__card" id="customizeForm">
+      <header class="modal__header">
+        <h3 id="modalCustomizeTitle">캐릭터 커스터마이징</h3>
+        <button class="icon-btn" value="close" aria-label="닫기"><img src="assets/icons/close.svg" alt="" /></button>
+      </header>
+      <div class="modal__body grid-2">
+        <fieldset>
+          <legend class="fieldset__legend">외형</legend>
+          <label class="field">
+            <span>헤어 컬러</span>
+            <input type="color" name="hairColor" value="#6b7cff" />
+          </label>
+          <label class="field">
+            <span>아이 컬러</span>
+            <input type="color" name="eyeColor" value="#2b2b2b" />
+          </label>
+          <label class="field">
+            <span>의상 테마</span>
+            <select name="outfit">
+              <option value="casual">캐주얼</option>
+              <option value="school">스쿨</option>
+              <option value="fantasy">판타지</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend class="fieldset__legend">성격</legend>
+          <label class="field">
+            <span>대화 톤</span>
+            <select name="tone">
+              <option value="gentle">다정</option>
+              <option value="cheerful">명랑</option>
+              <option value="calm">차분</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>관심사</span>
+            <input type="text" name="interests" placeholder="예: 게임, 요리, 음악" />
+          </label>
+        </fieldset>
+      </div>
+      <footer class="modal__footer">
+        <button class="btn btn--secondary" value="cancel">취소</button>
+        <button class="btn btn--primary" value="default" data-action="apply-customize">적용</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- 모달: 프리미엄 업셀 -->
+  <dialog class="modal" id="modalUpsell" aria-labelledby="modalUpsellTitle">
+    <form method="dialog" class="modal__card">
+      <header class="modal__header">
+        <h3 id="modalUpsellTitle">프리미엄으로 확장하기</h3>
+        <button class="icon-btn" value="close" aria-label="닫기"><img src="assets/icons/close.svg" alt="" /></button>
+      </header>
+      <div class="modal__body">
+        <ul class="checklist">
+          <li>인기 애니 캐릭터 대화</li>
+          <li>특별 활동(식사·게임 등)</li>
+          <li>세션 기록 & 감정 리포트</li>
+        </ul>
+        <div class="plan-cards" role="list">
+          <button class="plan-card" role="listitem" data-plan="plus">
+            <strong>Plus</strong>
+            <span>대화 확장</span>
+          </button>
+          <button class="plan-card" role="listitem" data-plan="premium">
+            <strong>Premium</strong>
+            <span>전체 기능</span>
+          </button>
+        </div>
+      </div>
+      <footer class="modal__footer">
+        <button class="btn btn--secondary" value="cancel">나중에</button>
+        <button class="btn btn--primary" value="default" data-action="choose-plan">업그레이드</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- 모달: 안전 안내 -->
+  <dialog class="modal" id="modalSafety" aria-labelledby="modalSafetyTitle">
+    <form method="dialog" class="modal__card">
+      <header class="modal__header">
+        <h3 id="modalSafetyTitle">안전 안내</h3>
+        <button class="icon-btn" value="close" aria-label="닫기"><img src="assets/icons/close.svg" alt="" /></button>
+      </header>
+      <div class="modal__body">
+        <p>HEARt는 정서적 지지 도구이며, 전문 의료·상담을 대체하지 않습니다. 위기 상황에서는 지역 상담기관·긴급 번호로 연락하세요.</p>
+        <ul class="contact-list">
+          <li>국번없이 1393 (자살예방 상담전화)</li>
+          <li>국번없이 129 (보건복지상담센터)</li>
+        </ul>
+      </div>
+      <footer class="modal__footer">
+        <button class="btn btn--primary" value="default">확인</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- 템플릿: 메시지 아이템 -->
+  <template id="tplMsgAI">
+    <div class="msg msg--ai">
+      <div class="msg__avatar" aria-hidden="true"><img src="assets/avatars/ari.png" alt="" /></div>
+      <div class="msg__bubble"><p></p><time class="msg__time"></time></div>
+    </div>
+  </template>
+
+  <template id="tplMsgUser">
+    <div class="msg msg--user">
+      <div class="msg__bubble"><p></p><time class="msg__time"></time></div>
+    </div>
+  </template>
+
+  <!-- 푸터 -->
+  <footer class="site-footer">
+    <div class="container footer__inner">
+      <small>© <span data-bind="year">2025</span> HEARt. All rights reserved.</small>
+      <nav class="footer__nav" aria-label="푸터">
+        <a href="#" data-action="open-privacy">개인정보처리방침</a>
+        <a href="#" data-action="open-terms">이용약관</a>
+        <a href="#" data-action="open-contact">문의</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- 외부 스크립트: JS는 별도 파일(app.js)에서만 로드 -->
+  <script src="app.js" defer></script>
+</body>
+</html>
