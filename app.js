@@ -176,7 +176,6 @@ chatForm?.addEventListener("submit", (e) => {
   appendMessage("user", text);
   chatText.value = "";
   autoGrow(chatText);
-  decrementTime(15); // 메시지당 15초 차감(데모)
   aiReply(text);
 });
 
