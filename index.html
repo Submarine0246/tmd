@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title> 버추얼 심리데이터 기반 감정 ai 상담사</title>
+  <title>버추얼 ai 상담 사이트</title>
   <meta name="description" content="AI 버추얼 캐릭터와 대화하며 외로움을 해소하는 감정 상담 플랫폼 프로토타입" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="favicon.ico" />
@@ -16,7 +16,7 @@
     <div class="header__inner container">
       <a class="brand" href="#" aria-label="홈">
         <img src="assets/logo.svg" alt="" class="brand__logo" />
-        <span class="brand__name"> 버추얼 심리데이터 기반 감정 ai 상담사</span>
+        <span class="brand__name">관저중 6번 타자</span>
       </a>
 
       <nav class="nav" aria-label="주요 메뉴">
@@ -77,7 +77,7 @@
             <dl class="kv">
               <div class="kv__row">
                 <dt>남은 무료 시간</dt>
-                <dd><span data-bind="freeMinutes">20</span>분</dd>
+                <dd><span data-bind="freeMinutes">10</span>분</dd>
               </div>
               <div class="kv__row">
                 <dt>감정 상태</dt>
@@ -85,7 +85,9 @@
               </div>
               <div class="kv__row">
                 <dt>모드</dt>
-                <dd><span data-bind="modeLabel">라이트 상담</span></dd>
+                <dd>
+                  <span data-bind="modeLabel">라이트 상담</span>
+                </dd>
               </div>
             </dl>
             <div class="stack gap-s">
@@ -112,7 +114,7 @@
             <h2 class="card__title">요금제</h2>
           </header>
           <ul class="pricing-list">
-            <li><strong>Free</strong> — 20분/일 체험</li>
+            <li><strong>Free</strong> — 10분/일 체험</li>
             <li><strong>Plus</strong> — 대화 무제한, 기본 활동</li>
             <li><strong>Premium</strong> — 인기 캐릭터 & 특별 활동</li>
           </ul>
@@ -154,7 +156,7 @@
           <div class="msg msg--ai" data-msg-id="seed-1">
             <div class="msg__avatar" aria-hidden="true"><img src="assets/avatars/shima.png" alt="" /></div>
             <div class="msg__bubble">
-              <p>안녕! 오늘 기분은 어때? 편하게 이야기해볼래?</p>
+              <p>안녕! 오늘 기분은 어때? 편하게 이야기 나눠볼래?</p>
               <time class="msg__time" datetime="">지금</time>
             </div>
           </div>
@@ -163,7 +165,7 @@
         <!-- 입력 영역 -->
         <form class="chat__input" id="chatForm" aria-label="메시지 입력">
           <label for="chatText" class="visually-hidden">메시지 입력</label>
-          <textarea id="chatText" name="message" rows="1" placeholder="키워드를 포함해 말해줘… (예: 외로워, 불안, 행복, 게임)" autocomplete="off"></textarea>
+          <textarea id="chatText" name="message" rows="1" placeholder="무슨 일이 있었는지 말해줘…" autocomplete="off"></textarea>
           <div class="chat__input-actions">
             <button type="button" class="icon-btn" aria-label="이모지" data-action="open-emoji">
               <img src="assets/icons/emoji.svg" alt="" />
@@ -174,7 +176,7 @@
 
         <!-- 세션 툴바 -->
         <div class="session-toolbar" role="status" aria-live="polite">
-          <span>남은 무료 시간: <strong data-bind="freeMinutes">20</strong>분</span>
+          <span>남은 무료 시간: <strong data-bind="freeMinutes">10</strong>분</span>
           <button class="btn btn--link" data-action="open-upsell">시간 늘리기</button>
         </div>
       </section>
@@ -190,24 +192,28 @@
       </header>
       <div class="modal__body">
         <div class="char-grid" role="list" id="characterList">
-          <!-- 캐릭터 카드: 이름/태그/이미지 -->
-          <button class="char-card is-active" role="listitem" data-char-id="shima">
-            <img src="assets/avatars/shima.png" alt="shima" />
+          <!-- JS에서 카드 주입 -->
+          <button class="char-card" role="listitem" data-char-id="shima">
+            <img src="assets/avatars/shima.png" alt="" />
             <span class="char-card__name">시마 린</span>
-            <span class="char-card__tag">차분</span>
+            <span class="char-card__tag">기본</span>
           </button>
           <button class="char-card" role="listitem" data-char-id="nadesiko">
-            <img src="assets/avatars/nadesiko.png" alt="nadesiko" />
+            <img src="assets/avatars/nadesiko.png" alt="" />
             <span class="char-card__name">카가미하라 나데시코</span>
-            <span class="char-card__tag">발랄</span>
+            <span class="char-card__tag">활발</span>
           </button>
           <button class="char-card" role="listitem" data-char-id="aoi">
-            <img src="assets/avatars/aoi.png" alt="aoi" />
+            <img src="assets/avatars/aoi.png" alt="" />
             <span class="char-card__name">이누야마 아오이</span>
-            <span class="char-card__tag">다정</span>
+            <span class="char-card__tag">차분</span>
           </button>
         </div>
       </div>
+      <footer class="modal__footer">
+        <button class="btn btn--secondary" value="cancel">취소</button>
+        <button class="btn btn--primary" value="default" data-action="choose-character">선택</button>
+      </footer>
     </form>
   </dialog>
 
@@ -301,7 +307,7 @@
         <button class="icon-btn" value="close" aria-label="닫기"><img src="assets/icons/close.svg" alt="" /></button>
       </header>
       <div class="modal__body">
-        <p>HEARt는 정서적 지지 도구이며, 전문 의료·상담을 대체하지 않습니다. 위기 상황에서는 지역 상담기관·긴급 번호로 연락하세요.</p>
+        <p>이 사이트는 정서적 지지 도구이며, 전문 의료·상담을 대체하지 않습니다. 위기 상황에서는 지역 상담기관·긴급 번호로 연락하세요.</p>
         <ul class="contact-list">
           <li>국번없이 1393 (자살예방 상담전화)</li>
           <li>국번없이 129 (보건복지상담센터)</li>
@@ -327,101 +333,6 @@
     </div>
   </template>
 
-  <!-- ====== 키워드별 응답 세트 (HTML 내 JSON, 캐릭터별 분리) ====== -->
-  <!-- JS에서 document.getElementById('replies-캐릭터id')로 불러와 사용하면 됨 -->
-
-  <!-- 기본(공통) 응답: 캐릭터에 키워드가 없으면 이 세트를 사용 -->
-  <script type="application/json" id="replies-default">
-  {
-    "안녕|하이|hello|hi": "안녕! 만나서 반가워 😊 오늘 하루는 어땠어?",
-    "외로워|외롭": "외로움을 느낄 때는 작은 연결부터 시작해보자. 내가 지금 여기서 같이 있을게.",
-    "불안|초조|걱정": "불안을 0~10 중 숫자로 표현해볼까? 그리고 1만큼 줄일 수 있는 행동을 같이 찾아보자.",
-    "우울|슬퍼|힘들": "그렇게 느끼는 건 자연스러워. 감정은 신호야. 오늘 너를 가장 힘들게 한 장면을 한 문장으로 적어볼래?",
-    "행복|기뻐|좋아": "그 기분 소중해! 어떤 일이 그런 감정을 만들었는지 기록해두면 다음에도 도움이 돼.",
-    "게임|플레이|랭크": "게임 좋아해? 요즘 하는 타이틀이나 선호 장르가 뭐야?",
-    "식사|밥|먹었": "밥은 잘 챙겨 먹었어? 오늘 먹은 것 중 가장 맛있었던 건 뭐였어?",
-    "수면|잠|깊잠": "수면은 마음 회복에 중요해. 어젯밤 수면 시간은 어느 정도였어?",
-    "고마워|땡큐|감사": "나도 고마워! 네가 이야기해줘서 기뻐."
-  }
-  </script>
-
-  <!-- shima 전용: 차분/분석형 톤 -->
-  <script type="application/json" id="replies-shima">
-  {
-    "안녕|hello|hi": "안녕, 나는 시마 린이야. 편안한 속도로 이야기해도 괜찮아.",
-    "외로워|외롭": "그 감정을 인정해주는 것부터가 시작이야. 지금 가장 필요한 건 무엇일까를 함께 정리해보자.",
-    "불안|초조|걱정": "호흡을 천천히 세 번 해볼까? 그런 다음 상황·생각·감정을 분리해서 살펴보자.",
-    "우울|슬퍼|힘들": "오늘의 에너지 지표(0~10)를 적어볼래? 1만큼 올리는 작은 행동을 같이 정하자.",
-    "행복|기뻐|좋아": "좋은 신호네. 그 순간의 조건(장소, 사람, 활동)을 기록해두자. 재현 포인트가 될 거야."
-  }
-  </script>
-
-  <!-- nadesiko 전용: 발랄/격려 톤 -->
-  <script type="application/json" id="replies-nadesiko">
-  {
-    "안녕|hello|hi": "안뇽! 카가미하라 나데시코 등장 ✨ 오늘 에너지 몇 점?!",
-    "외로워|외롭": "내가 옆에 붙어있을게! 지금 바로 DM하는 느낌으로 뭐든 툭 던져봐 💬",
-    "불안|초조|걱정": "작은 액션으로 비빌언덕 만들자! 물 한 잔 + 30초 스트레칭 어떠니?",
-    "우울|슬퍼|힘들": "괴로웠겠다… 하지만 너 진짜 잘 버텼어. 오늘 너 스스로에게 칭찬 한 줄 남겨볼래?",
-    "행복|기뻐|좋아": "와우! 그 순간 캡처 완료 📸 왜 좋았는지 3단어로 요약해줘!"
-  }
-  </script>
-
-  <!-- aoi 전용: 다정/공감 톤 -->
-  <script type="application/json" id="replies-aoi">
-  {
-    "안녕|hello|hi": "안녕, 난 아오야마 아오이야. 여기선 너의 속도가 기준이디 <!-- ====== 키워드별 응답 세트 (HTML 내 JSON, 캐릭터별 분리) ====== -->
-  <!-- JS에서 document.getElementById('replies-캐릭터id')로 불러와 사용하면 됨 -->
-
-  <!-- 기본(공통) 응답: 캐릭터에 키워드가 없으면 이 세트를 사용 -->
-  <script type="application/json" id="replies-default">
-  {
-    "안녕|하이|hello|hi": "안녕! 만나서 반가워 😊 오늘 하루는 어땠어?",
-    "외로워|외롭": "외로움을 느낄 때는 작은 연결부터 시작해보자. 내가 지금 여기서 같이 있을게.",
-    "불안|초조|걱정": "불안을 0~10 중 숫자로 표현해볼까? 그리고 1만큼 줄일 수 있는 행동을 같이 찾아보자.",
-    "우울|슬퍼|힘들": "그렇게 느끼는 건 자연스러워. 감정은 신호야. 오늘 너를 가장 힘들게 한 장면을 한 문장으로 적어볼래?",
-    "행복|기뻐|좋아": "그 기분 소중해! 어떤 일이 그런 감정을 만들었는지 기록해두면 다음에도 도움이 돼.",
-    "게임|플레이|랭크": "게임 좋아해? 요즘 하는 타이틀이나 선호 장르가 뭐야?",
-    "식사|밥|먹었": "밥은 잘 챙겨 먹었어? 오늘 먹은 것 중 가장 맛있었던 건 뭐였어?",
-    "수면|잠|깊잠": "수면은 마음 회복에 중요해. 어젯밤 수면 시간은 어느 정도였어?",
-    "고마워|땡큐|감사": "나도 고마워! 네가 이야기해줘서 기뻐."
-  }
-  </script>
-
-  <!-- shima 전용: 차분/분석형 톤 -->
-  <script type="application/json" id="replies-shima">
-  {
-    "안녕|hello|hi": "안녕, 나는 시마 린이야. 편안한 속도로 이야기해도 괜찮아.",
-    "외로워|외롭": "그 감정을 인정해주는 것부터가 시작이야. 지금 가장 필요한 건 무엇일까를 함께 정리해보자.",
-    "불안|초조|걱정": "호흡을 천천히 세 번 해볼까? 그런 다음 상황·생각·감정을 분리해서 살펴보자.",
-    "우울|슬퍼|힘들": "오늘의 에너지 지표(0~10)를 적어볼래? 1만큼 올리는 작은 행동을 같이 정하자.",
-    "행복|기뻐|좋아": "좋은 신호네. 그 순간의 조건(장소, 사람, 활동)을 기록해두자. 재현 포인트가 될 거야."
-  }
-  </script>
-
-  <!-- nadesiko 전용: 발랄/격려 톤 -->
-  <script type="application/json" id="replies-nadesiko">
-  {
-    "안녕|hello|hi": "안뇽! 카가미하라 나데시코 등장 ✨ 오늘 에너지 몇 점?!",
-    "외로워|외롭": "내가 옆에 붙어있을게! 지금 바로 DM하는 느낌으로 뭐든 툭 던져봐 💬",
-    "불안|초조|걱정": "작은 액션으로 비빌언덕 만들자! 물 한 잔 + 30초 스트레칭 어떠니?",
-    "우울|슬퍼|힘들": "괴로웠겠다… 하지만 너 진짜 잘 버텼어. 오늘 너 스스로에게 칭찬 한 줄 남겨볼래?",
-    "행복|기뻐|좋아": "와우! 그 순간 캡처 완료 📸 왜 좋았는지 3단어로 요약해줘!"
-  }
-  </script>
-
-  <!-- aoi 전용: 다정/공감 톤 -->
-  <script type="application/json" id="replies-aoi">
-  {
-    "안녕|hello|hi": "안녕, 난 이누야마 아오이데이. 여기선 너의 속도가 기준이데이.",
-    "외로워|외롭": "혼자라고 느껴질 때 정말 막막하지 안캈나. 지금 이 자리만큼은 함께할거데이.",
-    "불안|초조|걱정": "괜찮데이. 불안은 너를 보호하려는 마음의 시도일 때가 있다 안카나. 우리가 천천히 다룰 수 있데이.",
-    "우울|슬퍼|힘들": "내가 듣고 있데이. 네가 겪은 일을 네 언어로 조금만 나눠주지 않을래?",
-    "행복|기뻐|좋아": "그 따뜻한 마음, 나도 느껴진데이. 그 순간을 더 늘릴 방법을 같이 상상해보제이."
-  }
-  </script>
-  <!-- ====== 끝: 키워드별 응답 세트 ====== -->
-
   <!-- 푸터 -->
   <footer class="site-footer">
     <div class="container footer__inner">
@@ -435,6 +346,10 @@
   </footer>
 
   <!-- 외부 스크립트: JS는 별도 파일(app.js)에서만 로드 -->
+  <script src="app.js" defer></script>
+</body>
+</html>
+
   <script src="app.js" defer></script>
 </body>
 </html>
