@@ -1,8 +1,3 @@
-/* ==============================
-   HEARt — Prototype App Script
-   (키워드별 응답 로직 포함)
-   ============================== */
-
 /* ---------- Utils ---------- */
 const $ = (sel, el = document) => el.querySelector(sel);
 const $$ = (sel, el = document) => Array.from(el.querySelectorAll(sel));
@@ -293,7 +288,7 @@ document.addEventListener("click", (e) => {
   if (action === "open-signup") appendMessage("ai", "회원가입 플로우는 추후 연결될 예정이야.");
   if (action === "open-privacy") appendMessage("ai", "개인정보처리방침(더미): 실제 배포 시 링크로 대체.");
   if (action === "open-terms") appendMessage("ai", "이용약관(더미): 실제 배포 시 링크로 대체.");
-  if (action === "open-contact") appendMessage("ai", "문의: support@heart.example (더미)");
+  if (action === "open-contact") appendMessage("ai", "문의: 24_10717@dshs.kr");
 });
 
 /* 캐릭터 카드 active 토글 */
